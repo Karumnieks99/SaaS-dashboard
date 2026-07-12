@@ -1,5 +1,7 @@
 # Pulse
 
+Repo: https://github.com/Karumnieks99/SaaS-dashboard
+
 A portfolio-grade SaaS analytics dashboard for a fictional B2B product.
 Three views — business overview, customer directory, monthly reports — where
 every number on screen traces back to a single seeded dataset, and every
@@ -58,3 +60,5 @@ Spline Sans Mono for every numeral, Bricolage Grotesque for identity. Charts
 are stroke-only on a dotted graticule; the MRR hero card's EKG sparkline and
 live blip are the one animated flourish, suppressed under
 `prefers-reduced-motion`.
+
+
