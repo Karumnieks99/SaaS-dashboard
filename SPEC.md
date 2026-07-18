@@ -7,10 +7,17 @@
 ## STACK
 
 Next.js 14+ (App Router) + TypeScript + Tailwind. Recharts for charts.
-Deployable to Vercel. No database — the mock API lives in Next.js route
-handlers (app/api/...) returning JSON from the source-of-truth dataset
-module, with 300–700ms simulated latency and a 5% simulated failure rate,
-so all fetches are real HTTP requests with real loading/error/retry states.
+Deployed as a static export to GitHub Pages. No database and no server at
+runtime — the mock API lives in `lib/api/localFetch.ts`, an in-browser
+resolver returning data from the source-of-truth dataset module, with
+300–700ms simulated latency and a 5% simulated failure rate, so every fetch
+still has real async timing and real loading/error/retry states, just
+without a network hop.
+
+> Note: this section originally described server-side `app/api/*` route
+> handlers doing real HTTP round trips. It was updated on 2026-07-18 to
+> reflect the move to a static export for GitHub Pages hosting — see
+> `docs/superpowers/specs/2026-07-18-github-pages-static-export-design.md`.
 
 ## PRODUCT *(drafted)*
 
@@ -32,15 +39,15 @@ real network call.
   previous month.
 - Reports: one summary per month — revenue, new customers, churned customers, net
   MRR movement.
-- API endpoints (all GET):
+- API endpoints (all GET-shaped, resolved in-browser via `lib/api/localFetch.ts`):
   - `/api/metrics` → KPI summary
   - `/api/revenue?months=N` → time series
   - `/api/customers?page&query&plan&status&sort&dir` → filtered/sorted/paginated list
-    (filtering happens **server-side in the handler**, so table interactions are real
-    HTTP round trips)
+    (filtering happens in the resolver, so table interactions still go
+    through the same async delay/failure/retry path a real round trip would)
   - `/api/reports` → monthly summaries
-- `lib/api/simulate.ts` is shared by every handler: random 300–700 ms delay, then a
-  5% chance of returning `{ error }` with HTTP 500.
+- `lib/api/simulate.ts` is shared by every call through `localFetch`: random
+  300–700 ms delay, then a 5% chance of throwing an error.
 
 ## ARCHITECTURE
 
@@ -48,12 +55,17 @@ real network call.
   with a shared layout (sidebar + top bar) that does not re-render on
   navigation
 - Use server components for the static shell; data regions are client
-  components fetching from the route handlers — keep the boundary
+  components fetching through `lib/api/localFetch.ts` — keep the boundary
   deliberate and commented, not accidental
 - Loading states via loading.tsx per route in addition to per-region
   skeletons; error.tsx boundaries with retry
 - Proper metadata API usage (page titles per route) — small, but real
   products have it
+
+> Note: the second bullet originally said data regions fetched "from the
+> route handlers." It was updated on 2026-07-18 for the same reason as the
+> STACK section above — see
+> `docs/superpowers/specs/2026-07-18-github-pages-static-export-design.md`.
 
 ## PAGES *(drafted)*
 

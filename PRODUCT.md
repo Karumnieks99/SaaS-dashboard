@@ -1,6 +1,6 @@
 # Pulse
 
-- **What**: Portfolio-grade analytics dashboard for a fictional B2B SaaS — business overview, customer directory, monthly reports. Every number traces to one seeded dataset; every fetch is a real HTTP call against mock route handlers with simulated latency and failures.
+- **What**: Portfolio-grade analytics dashboard for a fictional B2B SaaS — business overview, customer directory, monthly reports. Every number traces to one seeded dataset; every fetch behaves like a real network call (simulated latency and failures), resolved in-browser so the app ships as a static export on GitHub Pages.
 - **Audience**: Portfolio reviewers and the founder persona the demo plays: someone glancing at an always-on revenue monitor, not reading a report.
 - **Register**: product — design serves the task; density and consistency over spectacle.
 - **Design direction**: committed dark "monitor" theme (see `SPEC.md` DESIGN). Green-cast deep-ink surfaces, phosphor-teal accent reserved for data/live state, steel-blue ordinal ramp for plan tiers, status colors reserved for status. Signature element: the hero MRR card's EKG sparkline with a live blip; everything else stays quiet.

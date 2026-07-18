@@ -1,12 +1,14 @@
 # Pulse
 
 Repo: https://github.com/Karumnieks99/SaaS-dashboard
+Live demo: https://karumnieks99.github.io/SaaS-dashboard/
 
 A portfolio-grade SaaS analytics dashboard for a fictional B2B product.
 Three views — business overview, customer directory, monthly reports — where
 every number on screen traces back to a single seeded dataset, and every
-fetch behaves like a real network call (real HTTP requests, simulated
-latency, simulated failures, retry).
+fetch behaves like a real network call (simulated latency, simulated
+failures, retry) — all running client-side so the whole app is a static
+export deployable to GitHub Pages.
 
 See [`SPEC.md`](./SPEC.md) and [`PRODUCT.md`](./PRODUCT.md) for the full spec
 and product framing.
@@ -14,9 +16,10 @@ and product framing.
 ## Stack
 
 Next.js (App Router) + TypeScript + Tailwind, charts via Recharts. No
-database — `app/api/*` route handlers read from `lib/data/dataset.ts`, the
-single source of truth, with 300–700ms simulated latency and a 5% simulated
-failure rate baked into every response.
+database and no server at runtime — `lib/api/localFetch.ts` resolves
+requests in-browser against `lib/data/dataset.ts`, the single source of
+truth, with 300–700ms simulated latency and a 5% simulated failure rate
+baked into every call.
 
 ## Getting started
 
@@ -29,23 +32,25 @@ Open [http://localhost:3000](http://localhost:3000) — it redirects into
 `/overview`.
 
 ```bash
-npm run build   # production build
-npm run start   # serve the production build
+npm run build   # static export to out/
+npx serve out   # preview the static export locally
 ```
 
 ## Project structure
 
 - `app/(dashboard)/{overview,customers,reports}` — the three routes, each
   with its own `loading.tsx` skeleton and `error.tsx` retry boundary.
-- `app/api/{metrics,revenue,customers,reports}` — mock API route handlers.
-  `/api/customers` supports `page`, `query`, `plan`, `status`, `sort`, `dir`
-  and does real server-side filtering/sorting/pagination.
+- `lib/api/localFetch.ts` — in-browser resolver standing in for a real API:
+  parses a URL-shaped string (e.g. `/api/customers?page=2&sort=mrr`) and
+  dispatches to `lib/data/dataset.ts`, doing real filtering/sorting/
+  pagination. `/api/customers` supports `page`, `query`, `plan`, `status`,
+  `sort`, `dir`.
 - `lib/data/dataset.ts` — seeded (mulberry32) dataset generation: ~80
   customers plus an 18-month revenue/MRR series derived from their
   signup/churn dates. Anchored to the current month at runtime, so figures
   shift naturally at month boundaries.
 - `lib/api/simulate.ts` — shared latency/failure simulation used by every
-  route handler.
+  call through `localFetch`.
 - `components/regions/*` — client components that own a fetch (via
   `lib/api/useApi.ts`) plus its loading/error/empty states.
 - `components/charts/*` and `components/ui/*` — presentational chart and UI
