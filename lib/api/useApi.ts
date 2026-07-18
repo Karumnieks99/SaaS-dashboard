@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { localFetch } from "@/lib/api/localFetch";
 
 export interface UseApiResult<T> {
   /** Last successful payload. Kept while a refetch is in flight so tables can
@@ -18,7 +19,7 @@ interface Settled<T> {
 }
 
 // The one data-fetching primitive of the app. Every client region calls this
-// against a route handler, so the loading / error / retry story is identical
+// with a URL-shaped key, so the loading / error / retry story is identical
 // everywhere the simulated network misbehaves.
 //
 // `loading` is derived, not stored: a request is in flight whenever the last
@@ -31,29 +32,16 @@ export function useApi<T>(url: string): UseApiResult<T> {
   const key = `${url}#${attempt}`;
 
   useEffect(() => {
-    const controller = new AbortController();
     let cancelled = false;
     const requestKey = `${url}#${attempt}`;
 
-    fetch(url, { signal: controller.signal })
-      .then(async (res) => {
-        const body = await res.json().catch(() => null);
-        if (!res.ok) {
-          throw new Error(
-            (body as { error?: string } | null)?.error ??
-              `Request failed with status ${res.status}`
-          );
-        }
-        return body as T;
-      })
+    localFetch<T>(url)
       .then((body) => {
         if (cancelled) return;
         setSettled({ key: requestKey, data: body, error: null });
       })
       .catch((err: unknown) => {
-        if (cancelled || (err instanceof DOMException && err.name === "AbortError")) {
-          return;
-        }
+        if (cancelled) return;
         const message =
           err instanceof Error ? err.message : "Something went wrong.";
         // Carry the previous data forward so a failed refetch doesn't wipe
@@ -67,7 +55,6 @@ export function useApi<T>(url: string): UseApiResult<T> {
 
     return () => {
       cancelled = true;
-      controller.abort();
     };
   }, [url, attempt]);
 

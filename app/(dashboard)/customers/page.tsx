@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 // Server component: static structure only — the table region is the client
-// boundary, since search/filter/sort/pagination all talk to /api/customers.
+// boundary, since search/filter/sort/pagination all go through localFetch.
 // CustomerTable reads useSearchParams(), which requires a Suspense boundary
 // on a statically prerendered page.
 export default function CustomersPage() {
