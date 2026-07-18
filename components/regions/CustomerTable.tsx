@@ -11,9 +11,9 @@ import { formatCurrency, formatDate } from "@/lib/format";
 import type { CustomerPage, CustomerSortField } from "@/lib/data/types";
 
 // Client region: the entire table is driven by /api/customers query params.
-// Filtering, sorting, and pagination all happen server-side in the route
-// handler — every interaction here is a real HTTP round trip. Filter/sort/
-// page state lives in the URL (not local state) so it survives reload,
+// Filtering, sorting, and pagination happen in-browser via localFetch
+// with simulated async delays — every interaction is resolved client-side.
+// Filter/sort/page state lives in the URL (not local state) so it survives reload,
 // back/forward, and shared links.
 
 const SORTABLE: Array<{ field: CustomerSortField; label: string; align?: "right" }> = [

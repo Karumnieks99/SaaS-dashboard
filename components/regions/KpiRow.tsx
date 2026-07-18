@@ -8,7 +8,7 @@ import StatCard, { DeltaText } from "@/components/ui/StatCard";
 import { formatCurrency, formatPercent } from "@/lib/format";
 import type { MetricsSummary, RevenuePoint } from "@/lib/data/types";
 
-// Client region: /api/metrics drives the numbers over real HTTP; a second
+// Client region: /api/metrics drives the numbers via localFetch; a second
 // fetch of the 12-month series feeds the hero sparkline. MRR is the hero —
 // one large card with the EKG trace — and the other three stats are compact.
 // The sparkline is decoration on the hero, so its failure degrades to a quiet
