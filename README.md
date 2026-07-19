@@ -1,6 +1,6 @@
 # Pulse
 
-Repo: https://github.com/Karumnieks99/SaaS-dashboard
+
 Live demo: https://karumnieks99.github.io/SaaS-dashboard/
 
 A portfolio-grade SaaS analytics dashboard for a fictional B2B product.
